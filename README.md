@@ -5,9 +5,25 @@
 
 Un laboratorio completo de Kubernetes para práctica diaria usando Docker Desktop.
 
+## 🔒 Aislamiento del entorno
+
+El laboratorio no opera contra `~/.kube/config`. Todos los targets del Makefile y los scripts trabajan contra un kubeconfig local en `./.kube/config`, generado a partir del contexto `docker-desktop` de Docker Desktop. La generación solo lee el kubeconfig global; nunca lo escribe.
+
+- `make kubeconfig` genera `./.kube/config` con un único contexto (`docker-desktop`).
+- Antes de ejecutar cualquier comando, los scripts verifican que el contexto sea `docker-desktop` y que el servidor sea local. Si detectan un contexto ajeno al laboratorio, abortan.
+- El namespace por defecto del contexto local es `homelab`. Los manifiestos sin `namespace` se despliegan ahí.
+- `./.kube/` y `./.helm/` están en `.gitignore`.
+- Para usar `kubectl` manualmente, carga el entorno primero: `source scripts/activate.sh`.
+- `make reset` elimina el namespace `homelab` y los add-ons del lab (`monitoring`, `argocd`, `ingress-nginx`).
+
+Docker Desktop puede agregar o actualizar el contexto `docker-desktop` y cambiar el `current-context` global al iniciar. El laboratorio no usa ese archivo. Verifica tu contexto global con `kubectl config current-context` antes de trabajar con otros clusters.
+
+Si usas otro cluster local (por ejemplo kind o minikube), exporta su contexto antes de generar el kubeconfig: `export HOMELAB_CONTEXT=<nombre-del-contexto>`. El guard sigue exigiendo que el servidor sea local.
+
 ## 📋 Prerequisitos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) con Kubernetes habilitado
+- Provisioner `kubeadm` en Docker Desktop (los labs de `LoadBalancer` quedan en `localhost`; con `kind` usa `kubectl port-forward`)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [Helm](https://helm.sh/docs/intro/install/) (para labs intermedios/avanzados)
 
@@ -18,11 +34,18 @@ Un laboratorio completo de Kubernetes para práctica diaria usando Docker Deskto
 git clone https://github.com/FabianIMV/k8s-homelab.git
 cd k8s-homelab
 
-# 2. Verificar que Kubernetes está corriendo
+# 2. Generar el kubeconfig aislado (requiere Kubernetes habilitado en Docker Desktop)
+make kubeconfig
+
+# 3. Verificar que el contexto sea el aislado
 make check
 
-# 3. Comenzar con el primer lab
-kubectl apply -f 01-basic/01-pods/
+# 4. Desplegar el primer lab
+make pods
+
+# 5. Para usar kubectl manualmente en esta terminal
+source scripts/activate.sh
+kubectl get pods -n homelab
 ```
 
 ## 📚 Estructura del Lab
@@ -56,18 +79,39 @@ kubectl apply -f 01-basic/01-pods/
 ## 🛠️ Comandos Útiles
 
 ```bash
-make check          # Verificar estado del cluster
-make clean          # Limpiar todos los recursos del lab
-make reset          # Reset completo del lab
+make help             # Ver todos los targets disponibles
+make kubeconfig       # Generar el kubeconfig aislado en ./.kube/config
+make kubeconfig-force # Regenerar el kubeconfig aislado desde cero
+make check-context    # Verificar que el contexto sea el aislado
+make check            # Verificar estado del cluster
+make namespace        # Crear el namespace homelab
+make status           # Ver pods, services y deployments
+make clean            # Eliminar los manifiestos de los labs
+make reset            # clean + namespaces y add-ons (monitoring, ArgoCD, ingress)
 
 # Labs específicos
-make basic          # Desplegar todos los labs básicos
-make intermediate   # Desplegar todos los labs intermedios
-make monitoring     # Desplegar stack de monitoreo
-make argocd         # Instalar ArgoCD
+make basic            # Desplegar todos los labs básicos
+make pods             # Desplegar solo el lab de pods
+make deployments      # Desplegar solo el lab de deployments
+make services         # Desplegar solo el lab de services
+make apps             # Desplegar las apps de ejemplo
+make intermediate     # Desplegar labs intermedios (excepto el chart de Helm)
+make ingress          # Instalar NGINX Ingress Controller
+make monitoring       # Desplegar stack de monitoreo
+make argocd           # Instalar ArgoCD
+
+# Port-forward
+make forward-grafana
+make forward-argocd
 ```
 
 ## 📖 Comandos kubectl Esenciales
+
+Carga el entorno aislado antes de usar `kubectl` manualmente:
+
+```bash
+source scripts/activate.sh
+```
 
 ```bash
 # Pods
@@ -97,10 +141,14 @@ En `apps/` encontrarás aplicaciones listas para practicar:
 
 ```bash
 # Eliminar recursos de un lab específico
+source scripts/activate.sh
 kubectl delete -f 01-basic/01-pods/
 
-# Eliminar todo
+# Eliminar los manifiestos de todos los labs
 make clean
+
+# Eliminar además el namespace homelab y los add-ons (monitoring, ArgoCD, ingress)
+make reset
 ```
 
 ## 📝 Tips

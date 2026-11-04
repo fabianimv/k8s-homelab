@@ -30,3 +30,7 @@ Thumbs.db
 
 # Kubernetes
 kubeconfig
+
+# Configuración local aislada (nunca se sube)
+/.kube/
+/.helm/

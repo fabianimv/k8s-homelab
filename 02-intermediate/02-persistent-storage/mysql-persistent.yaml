@@ -26,6 +26,9 @@ metadata:
   name: mysql
 spec:
   replicas: 1
+  # El PVC es ReadWriteOnce: evita dos pods montándolo durante un rollout
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: mysql
@@ -36,7 +39,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:8.0
+        image: mysql:8.0.40
         ports:
         - containerPort: 3306
         env:

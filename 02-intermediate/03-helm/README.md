@@ -53,8 +53,15 @@ helm upgrade my-release ./my-app --set replicaCount=3
 ### Ejercicio 4: Usar el chart de ejemplo
 ```bash
 cd helm-chart-example
+
+# No uses kubectl apply en este directorio: las plantillas no son YAML puro.
 helm install demo .
 kubectl get all -l app.kubernetes.io/instance=demo
+
+# Opcional: habilitar el Ingress (requiere el controller: make ingress)
+helm upgrade --install demo . \
+  --set ingress.enabled=true \
+  --set ingress.host=webapp.local
 ```
 
 ## 🧹 Limpieza

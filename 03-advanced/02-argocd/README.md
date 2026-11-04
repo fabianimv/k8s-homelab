@@ -44,6 +44,7 @@ argocd login localhost:8080 --insecure
 
 ### Ejercicio 4: Crear una Aplicación
 ```bash
+# Crea las Applications guestbook y apps
 kubectl apply -f application.yaml
 
 # O usando CLI:
@@ -51,13 +52,16 @@ argocd app create guestbook \
   --repo https://github.com/argoproj/argocd-example-apps \
   --path guestbook \
   --dest-server https://kubernetes.default.svc \
-  --dest-namespace default
+  --dest-namespace homelab
 ```
 
 ### Ejercicio 5: Sync y Rollback
 ```bash
 # Sincronizar
 argocd app sync guestbook
+
+# La Application "apps" despliega los manifiestos de apps/ del repo
+argocd app sync apps
 
 # Ver estado
 argocd app get guestbook
@@ -69,5 +73,6 @@ argocd app rollback guestbook
 ## 🧹 Limpieza
 ```bash
 argocd app delete guestbook
+argocd app delete apps
 kubectl delete ns argocd
 ```

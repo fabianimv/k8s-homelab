@@ -22,8 +22,8 @@ kubectl get pods
 ### Ejercicio 2: Headless Service
 ```bash
 # Acceder a pods específicos por DNS
-kubectl run curl --image=curlimages/curl --rm -it -- \
-  curl web-0.nginx.default.svc.cluster.local
+kubectl run curl --image=curlimages/curl:8.10.1 --rm -it --restart=Never -- \
+  curl http://web-0.nginx.homelab.svc.cluster.local
 ```
 
 ### Ejercicio 3: Scaling

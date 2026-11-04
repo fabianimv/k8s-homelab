@@ -28,11 +28,11 @@ kubectl get pods -n istio-system
 
 ### Ejercicio 2: Habilitar sidecar injection
 ```bash
-# Habilitar auto-injection para el namespace default
-kubectl label namespace default istio-injection=enabled
+# Habilitar auto-injection para el namespace homelab
+kubectl label namespace homelab istio-injection=enabled
 
 # Desplegar aplicación de ejemplo
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.31/samples/bookinfo/platform/kube/bookinfo.yaml
 
 # Verificar sidecars
 kubectl get pods
@@ -41,7 +41,7 @@ kubectl get pods
 
 ### Ejercicio 3: Acceder a Kiali (Dashboard)
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.31/samples/addons/kiali.yaml
 kubectl port-forward svc/kiali 20001:20001 -n istio-system
 
 # Abrir http://localhost:20001
@@ -49,15 +49,21 @@ kubectl port-forward svc/kiali 20001:20001 -n istio-system
 
 ### Ejercicio 4: Traffic Management
 ```bash
+# Requiere bookinfo desplegado en el ejercicio 2
 kubectl apply -f virtual-service.yaml
 
-# Probar routing
-for i in {1..10}; do curl -s http://localhost/productpage | grep -o "reviews-v[0-9]"; done
+# Exponer productpage
+kubectl port-forward svc/productpage 9080:9080
+
+# En otra terminal, probar routing
+for i in {1..10}; do curl -s http://localhost:9080/productpage | grep -o "reviews-v[0-9]"; done
 ```
 
 ## 🧹 Limpieza
 ```bash
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl delete -f virtual-service.yaml --ignore-not-found
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.31/samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl label namespace homelab istio-injection-
 istioctl uninstall --purge -y
 kubectl delete namespace istio-system
 ```

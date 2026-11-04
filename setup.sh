@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/scripts/lib.sh"
 
 # Colors
 GREEN='\033[0;32m'
@@ -15,8 +20,8 @@ echo -n "Checking Docker... "
 if command -v docker &> /dev/null && docker info &> /dev/null; then
     echo -e "${GREEN}✓ Docker is running${NC}"
 else
-    echo -e "${RED}✗ Docker is not running${NC}"
-    echo "Please start Docker Desktop first"
+    echo -e "${RED}✗ Docker is not installed or not running${NC}"
+    echo "Install and start Docker Desktop first: https://www.docker.com/products/docker-desktop/"
     exit 1
 fi
 
@@ -35,20 +40,35 @@ else
     fi
 fi
 
-# Check Kubernetes cluster
-echo -n "Checking Kubernetes cluster... "
-if kubectl cluster-info &> /dev/null; then
-    echo -e "${GREEN}✓ Cluster is running${NC}"
+# Check isolated kubeconfig and context
+echo -n "Checking isolated kubeconfig... "
+if ensure_homelab_kubeconfig && require_homelab_context; then
+    echo -e "${GREEN}✓ Using ${KUBECONFIG}${NC}"
 else
-    echo -e "${RED}✗ Cluster is not running${NC}"
+    echo -e "${RED}✗ Isolated cluster context not available${NC}"
     echo ""
     echo "Please enable Kubernetes in Docker Desktop:"
     echo "1. Open Docker Desktop"
     echo "2. Go to Settings > Kubernetes"
     echo "3. Check 'Enable Kubernetes'"
     echo "4. Click 'Apply & Restart'"
+    echo ""
+    echo "Then run: make kubeconfig"
     exit 1
 fi
+
+# Check Kubernetes cluster
+echo -n "Checking Kubernetes cluster... "
+if kubectl cluster-info &> /dev/null; then
+    echo -e "${GREEN}✓ Cluster is running${NC}"
+else
+    echo -e "${RED}✗ Cluster is not running${NC}"
+    echo "Please enable Kubernetes in Docker Desktop and run 'make kubeconfig'"
+    exit 1
+fi
+
+# Create the isolated lab namespace
+kubectl apply -f "${HOMELAB_ROOT}/00-namespace.yaml" >/dev/null
 
 # Check Helm
 echo -n "Checking Helm... "
@@ -72,6 +92,6 @@ echo -e "${GREEN}✓ Setup complete!${NC}"
 echo ""
 echo "Next steps:"
 echo "  1. Run 'make check' to verify cluster status"
-echo "  2. Start with: kubectl apply -f 01-basic/01-pods/"
-echo "  3. Check resources: kubectl get pods"
+echo "  2. Run 'make basic' to deploy the basic labs"
+echo "  3. For manual kubectl: source scripts/activate.sh"
 echo ""

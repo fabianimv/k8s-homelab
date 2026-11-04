@@ -1,6 +1,8 @@
 # Ingress con routing basado en host
 # Requiere agregar hosts a /etc/hosts:
 # 127.0.0.1 app1.local app2.local
+# Requiere los Deployments y Services definidos en ingress-path.yaml
+# (app1-service y app2-service). Aplica ingress-path.yaml primero.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

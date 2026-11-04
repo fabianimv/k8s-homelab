@@ -34,8 +34,8 @@ kubectl describe storageclass hostpath
 ```bash
 kubectl apply -f mysql-persistent.yaml
 
-# Conectar a MySQL
-kubectl exec -it mysql -- mysql -uroot -ppassword
+# Conectar a MySQL (el Deployment usa strategy Recreate por el PVC RWO)
+kubectl exec -it deploy/mysql -- mysql -uroot -ppassword
 
 # Crear datos, eliminar pod, verificar que persisten
 ```

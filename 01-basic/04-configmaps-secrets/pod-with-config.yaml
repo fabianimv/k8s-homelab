@@ -6,17 +6,15 @@ metadata:
 spec:
   containers:
   - name: app
-    image: nginx:alpine
+    image: nginx:1.30-alpine
     
-    # Variables de entorno desde ConfigMap
-    env:
-    - name: APP_ENV
-      valueFrom:
-        configMapKeyRef:
-          name: nginx-config
-          key: APP_ENV
+    # Variables de entorno desde ConfigMap (solo claves válidas)
+    envFrom:
+    - configMapRef:
+        name: nginx-env
     
     # Variables de entorno desde Secret
+    env:
     - name: DB_USERNAME
       valueFrom:
         secretKeyRef:
@@ -27,11 +25,6 @@ spec:
         secretKeyRef:
           name: db-credentials
           key: password
-    
-    # También puedes cargar todos los valores de un ConfigMap
-    envFrom:
-    - configMapRef:
-        name: nginx-config
     
     # Montar ConfigMap como archivo
     volumeMounts:

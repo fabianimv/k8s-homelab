@@ -11,16 +11,16 @@ spec:
   # Init containers se ejecutan en orden, uno a la vez
   initContainers:
   - name: init-download
-    image: busybox
+    image: busybox:1.37
     command: ['sh', '-c', 'echo "Downloading config..." && sleep 2 && echo "Done!"']
   
   - name: init-setup
-    image: busybox
+    image: busybox:1.37
     command: ['sh', '-c', 'echo "Setting up..." && sleep 2 && echo "Ready!"']
   
   # Containers principales se ejecutan después
   containers:
   - name: app
-    image: nginx:alpine
+    image: nginx:1.30-alpine
     ports:
     - containerPort: 80

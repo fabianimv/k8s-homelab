@@ -1,6 +1,6 @@
 # VirtualService - Define reglas de routing
 # Requiere Istio instalado
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: reviews
@@ -21,7 +21,7 @@ spec:
 
 ---
 # DestinationRule - Define subsets y políticas
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
   name: reviews
@@ -44,7 +44,7 @@ spec:
 
 ---
 # VirtualService con routing basado en headers
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: reviews-header-based

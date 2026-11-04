@@ -13,17 +13,20 @@ spec:
   containers:
   # Container principal: nginx
   - name: nginx
-    image: nginx:alpine
+    image: nginx:1.30-alpine
     ports:
     - containerPort: 80
     volumeMounts:
     - name: shared-logs
       mountPath: /var/log/nginx
   
-  # Sidecar: procesa los logs
+  # Sidecar: espera a que nginx cree access.log y luego lo sigue
   - name: sidecar
-    image: busybox
-    command: ['sh', '-c', 'tail -f /var/log/nginx/access.log 2>/dev/null || sleep 3600']
+    image: busybox:1.37
+    command:
+    - sh
+    - -c
+    - until [ -f /var/log/nginx/access.log ]; do sleep 1; done; exec tail -f /var/log/nginx/access.log
     volumeMounts:
     - name: shared-logs
       mountPath: /var/log/nginx

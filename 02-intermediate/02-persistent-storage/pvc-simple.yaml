@@ -1,5 +1,5 @@
 # PersistentVolumeClaim simple
-# En Docker Desktop, se usa hostpath por defecto
+# Docker Desktop (kubeadm) usa la StorageClass hostpath por defecto
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -21,7 +21,7 @@ metadata:
 spec:
   containers:
   - name: app
-    image: nginx:alpine
+    image: nginx:1.30-alpine
     volumeMounts:
     - name: my-storage
       mountPath: /data

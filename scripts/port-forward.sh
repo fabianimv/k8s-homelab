@@ -1,7 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Port-forward común para servicios
 # Uso: ./port-forward.sh <service>
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+
+require_homelab_context
 
 case $1 in
     grafana)

@@ -19,6 +19,11 @@ kubectl logs nginx-simple
 ### Ejercicio 2: Pod Multi-Container
 ```bash
 kubectl apply -f pod-multi-container.yaml
+kubectl wait --for=condition=ready pod/multi-container --timeout=60s
+
+# Genera tráfico para que nginx cree access.log
+kubectl exec multi-container -c nginx -- wget -qO- http://localhost/ >/dev/null
+
 kubectl logs multi-container -c nginx
 kubectl logs multi-container -c sidecar
 ```
@@ -32,7 +37,7 @@ kubectl get pods -w  # Watch hasta que esté Ready
 ### Ejercicio 4: Pod con Resources
 ```bash
 kubectl apply -f pod-resources.yaml
-kubectl describe pod nginx-resources | grep -A5 "Limits\|Requests"
+kubectl describe pod nginx-resources | grep -A5 -E "Limits|Requests"
 ```
 
 ## 🧹 Limpieza

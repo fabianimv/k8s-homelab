@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: pod-reader
-  namespace: default
+  namespace: homelab
 rules:
 # Permite leer pods
 - apiGroups: [""]
@@ -20,12 +20,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: read-pods
-  namespace: default
+  namespace: homelab
 subjects:
 # Puede ser User, Group, o ServiceAccount
 - kind: ServiceAccount
   name: app-service-account
-  namespace: default
+  namespace: homelab
 roleRef:
   kind: Role
   name: pod-reader
@@ -37,7 +37,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: deployment-manager
-  namespace: default
+  namespace: homelab
 rules:
 - apiGroups: ["apps"]
   resources: ["deployments"]

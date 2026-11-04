@@ -24,7 +24,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: app-service-account
-  namespace: default
+  namespace: homelab
 roleRef:
   kind: ClusterRole
   name: cluster-viewer

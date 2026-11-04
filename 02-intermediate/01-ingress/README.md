@@ -12,8 +12,8 @@
 # Usando Makefile
 make ingress
 
-# O manualmente
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+# O manualmente (última versión publicada de ingress-nginx)
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.15.1/deploy/static/provider/cloud/deploy.yaml
 
 # Esperar a que esté listo
 kubectl wait --namespace ingress-nginx \
@@ -24,6 +24,7 @@ kubectl wait --namespace ingress-nginx \
 
 ### Ejercicio 2: Path-based Routing
 ```bash
+# Crea app1, app2 y sus Services
 kubectl apply -f ingress-path.yaml
 
 # Probar
@@ -33,6 +34,8 @@ curl localhost/app2
 
 ### Ejercicio 3: Host-based Routing
 ```bash
+# Requiere los Services creados por ingress-path.yaml
+kubectl apply -f ingress-path.yaml
 kubectl apply -f ingress-host.yaml
 
 # Agregar a /etc/hosts

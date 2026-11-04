@@ -19,11 +19,11 @@ spec:
     spec:
       containers:
       - name: flask
-        image: python:3.11-alpine
+        image: python:3.11.9-alpine
         command: ["/bin/sh", "-c"]
         args:
         - |
-          pip install flask && python /app/app.py
+          pip install --no-cache-dir flask==3.0.3 && python /app/app.py
         ports:
         - containerPort: 5000
         volumeMounts:
@@ -36,11 +36,17 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 30
+          periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 30
+          initialDelaySeconds: 10
           periodSeconds: 10
         readinessProbe:
           httpGet:

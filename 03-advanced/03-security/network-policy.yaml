@@ -11,7 +11,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: deny-all-ingress
-  namespace: default
+  namespace: homelab
 spec:
   podSelector: {}  # Aplica a todos los pods
   policyTypes:
@@ -55,7 +55,7 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: monitoring
+          kubernetes.io/metadata.name: monitoring
 
 ---
 # Ejemplo completo: API server
@@ -86,12 +86,16 @@ spec:
           app: database
     ports:
     - port: 5432
-  # Permitir DNS
+  # Permitir DNS (UDP y TCP)
   - to:
-    - namespaceSelector: {}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
       podSelector:
         matchLabels:
           k8s-app: kube-dns
     ports:
     - port: 53
       protocol: UDP
+    - port: 53
+      protocol: TCP

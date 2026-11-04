@@ -16,6 +16,9 @@ kubectl get configmap app-config -o yaml
 ### Ejercicio 2: ConfigMap desde archivo
 ```bash
 kubectl apply -f configmap.yaml
+
+# nginx-env contiene variables; nginx-config contiene nginx.conf
+kubectl describe configmap nginx-env
 kubectl describe configmap nginx-config
 ```
 
@@ -33,7 +36,7 @@ kubectl get secret db-credentials -o jsonpath='{.data.password}' | base64 -d
 ### Ejercicio 4: Usar en Pod
 ```bash
 kubectl apply -f pod-with-config.yaml
-kubectl exec pod-with-config -- env | grep -E 'DB_|APP_'
+kubectl exec pod-with-config -- env | grep -E 'DB_|APP_|LOG_LEVEL|MAX_CONNECTIONS'
 kubectl exec pod-with-config -- cat /etc/config/nginx.conf
 ```
 

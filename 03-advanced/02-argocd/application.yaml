@@ -17,7 +17,7 @@ spec:
   # Destino: cluster y namespace
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: homelab
   
   # Política de sync
   syncPolicy:
@@ -29,8 +29,7 @@ spec:
     - CreateNamespace=true
 
 ---
-# App-of-Apps pattern
-# Una aplicación que despliega otras aplicaciones
+# Application que despliega las apps de ejemplo del repositorio
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -40,8 +39,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/FabianIMV/k8s-homelab
-    targetRevision: HEAD
-    path: 03-advanced/02-argocd/apps  # Directorio con más Applications
+    targetRevision: main
+    path: apps  # Directorio existente con los manifiestos de ejemplo
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: homelab

@@ -12,8 +12,9 @@
 kubectl apply -f service-clusterip.yaml
 kubectl get svc
 
-# Probar desde dentro del cluster
-kubectl run curl --image=curlimages/curl --rm -it -- curl nginx-clusterip
+# El Service solo selecciona los pods de nginx-for-clusterip
+kubectl run curl --image=curlimages/curl:8.10.1 --rm -it --restart=Never -- \
+  curl http://nginx-clusterip
 ```
 
 ### Ejercicio 2: NodePort (externo)
@@ -22,7 +23,7 @@ kubectl apply -f service-nodeport.yaml
 kubectl get svc
 
 # Acceder desde el navegador
-# http://localhost:<nodeport>
+# http://localhost:30080
 ```
 
 ### Ejercicio 3: LoadBalancer
@@ -30,7 +31,7 @@ kubectl get svc
 kubectl apply -f service-loadbalancer.yaml
 kubectl get svc -w  # Esperar EXTERNAL-IP
 
-# En Docker Desktop, será localhost:<port>
+# En Docker Desktop, será http://localhost:80
 ```
 
 ### Ejercicio 4: DNS interno
@@ -38,8 +39,8 @@ kubectl get svc -w  # Esperar EXTERNAL-IP
 # Los servicios crean registros DNS automáticamente
 # Formato: <service-name>.<namespace>.svc.cluster.local
 
-kubectl run curl --image=curlimages/curl --rm -it -- \
-  curl nginx-clusterip.default.svc.cluster.local
+kubectl run curl --image=curlimages/curl:8.10.1 --rm -it --restart=Never -- \
+  curl http://nginx-clusterip.homelab.svc.cluster.local
 ```
 
 ## 🧹 Limpieza

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: nginx:1.30-alpine
         ports:
         - containerPort: 80
         volumeMounts:
@@ -73,13 +73,7 @@ data:
         <div class="emoji">☸️</div>
         <h1>K8s Homelab</h1>
         <p>Running on Kubernetes!</p>
-        <p>Hostname: <strong id="hostname"></strong></p>
       </div>
-      <script>
-        fetch('/etc/hostname').catch(() => {
-          document.getElementById('hostname').textContent = 'nginx-demo-xxx';
-        });
-      </script>
     </body>
     </html>
 

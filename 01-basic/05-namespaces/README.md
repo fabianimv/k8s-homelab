@@ -33,7 +33,7 @@ kubectl apply -f resource-quota.yaml
 kubectl describe quota -n lab-demo
 
 # Intentar exceder quota
-kubectl run test --image=nginx -n lab-demo
+kubectl run test --image=nginx:1.30-alpine -n lab-demo
 ```
 
 ### Ejercicio 4: Cambiar Namespace por defecto
@@ -41,8 +41,8 @@ kubectl run test --image=nginx -n lab-demo
 # Usar namespace temporalmente
 kubectl config set-context --current --namespace=lab-demo
 
-# Volver a default
-kubectl config set-context --current --namespace=default
+# Volver al namespace aislado del lab
+kubectl config set-context --current --namespace=homelab
 ```
 
 ## 🧹 Limpieza

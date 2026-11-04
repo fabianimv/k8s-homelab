@@ -1,0 +1,7 @@
+# Namespace aislado para los labs del homelab
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homelab
+  labels:
+    app.kubernetes.io/part-of: k8s-homelab

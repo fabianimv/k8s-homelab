@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: nginx-deployment
   labels:
-    app: nginx
+    app: nginx-deployment
 spec:
   # Número de réplicas deseadas
   replicas: 3
@@ -13,17 +13,17 @@ spec:
   # Selector para encontrar pods gestionados
   selector:
     matchLabels:
-      app: nginx
+      app: nginx-deployment
   
   # Template del pod
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx-deployment
     spec:
       containers:
       - name: nginx
-        image: nginx:1.24
+        image: nginx:1.30-alpine
         ports:
         - containerPort: 80
         resources:

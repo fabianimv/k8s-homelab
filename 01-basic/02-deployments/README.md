@@ -29,7 +29,7 @@ kubectl scale deployment nginx-deployment --replicas=3
 ### Ejercicio 3: Rolling Update
 ```bash
 # Actualizar imagen
-kubectl set image deployment/nginx-deployment nginx=nginx:1.25
+kubectl set image deployment/nginx-deployment nginx=nginx:1.30.1-alpine
 
 # Ver progreso
 kubectl rollout status deployment/nginx-deployment

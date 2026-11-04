@@ -3,7 +3,7 @@ replicaCount: 2
 
 image:
   repository: nginx
-  tag: alpine
+  tag: 1.30-alpine
   pullPolicy: IfNotPresent
 
 service:
@@ -21,6 +21,7 @@ resources:
 # Enable ingress
 ingress:
   enabled: false
+  className: nginx
   host: webapp.local
 
 # Environment variables

@@ -1,7 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Verificar estado del cluster de Kubernetes
+# Verificar estado del cluster aislado de Kubernetes
 # Uso: ./check-cluster.sh
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib.sh"
+
+require_homelab_context
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -12,10 +19,13 @@ echo "🔍 Kubernetes Cluster Health Check"
 echo "===================================="
 echo ""
 
+echo -e "${YELLOW}0. Contexto${NC}"
+echo "  $(kubectl config current-context) -> $(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')"
+echo ""
+
 # Check cluster
 echo -e "${YELLOW}1. Cluster Info${NC}"
-kubectl cluster-info 2>/dev/null
-if [ $? -ne 0 ]; then
+if ! kubectl cluster-info; then
     echo -e "${RED}✗ Cannot connect to cluster${NC}"
     exit 1
 fi
@@ -28,8 +38,12 @@ echo ""
 
 # Check system pods
 echo -e "${YELLOW}3. System Pods${NC}"
-kubectl get pods -n kube-system --field-selector=status.phase!=Running 2>/dev/null | grep -v "No resources"
-if [ $? -eq 0 ]; then
+if ! SYSTEM_PODS=$(kubectl get pods -n kube-system \
+    --field-selector=status.phase!=Running,status.phase!=Succeeded \
+    --no-headers 2>/dev/null); then
+    echo -e "${RED}✗ Cannot list kube-system pods${NC}"
+elif [ -n "${SYSTEM_PODS}" ]; then
+    echo "${SYSTEM_PODS}"
     echo -e "${RED}⚠ Some system pods are not running${NC}"
 else
     echo -e "${GREEN}✓ All system pods are running${NC}"

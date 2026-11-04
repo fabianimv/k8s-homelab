@@ -1,16 +1,23 @@
 # ConfigMap - Para configuraciones no sensibles
-# Puede contener pares key-value o archivos completos
+# Separa variables de entorno de archivos completos para evitar
+# que envFrom intente crear variables con nombres inválidos.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-env
+data:
+  # Valores simples (válidos como nombres de variables de entorno)
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+  MAX_CONNECTIONS: "100"
+
+---
+# ConfigMap con el archivo de configuración completo
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-config
 data:
-  # Valores simples
-  APP_ENV: "production"
-  LOG_LEVEL: "info"
-  MAX_CONNECTIONS: "100"
-  
-  # Archivo de configuración completo
   nginx.conf: |
     server {
       listen 80;

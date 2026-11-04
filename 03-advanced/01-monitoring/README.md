@@ -19,6 +19,8 @@ helm repo update
 helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
   --namespace monitoring --create-namespace \
   --set grafana.adminPassword=admin
+
+# Opcional: -f custom-values.yaml para persistencia y recursos
 ```
 
 ### Ejercicio 2: Acceder a Grafana
@@ -49,6 +51,7 @@ En Grafana:
 
 ### Ejercicio 5: Alertas
 ```bash
+# Requiere el stack instalado (crea el CRD PrometheusRule)
 kubectl apply -f alertmanager-config.yaml
 
 # Ver alertas activas
