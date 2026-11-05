@@ -11,7 +11,7 @@ export HOMELAB_NAMESPACE
 export HELM_REPOSITORY_CONFIG := $(ROOT_DIR)/.helm/repositories.yaml
 export HELM_REPOSITORY_CACHE := $(ROOT_DIR)/.helm/cache
 
-.PHONY: help kubeconfig kubeconfig-force check-context namespace check clean reset basic pods deployments services apps intermediate ingress monitoring argocd status forward-grafana forward-argocd
+.PHONY: help kubeconfig kubeconfig-force check-context namespace shell check clean reset basic pods deployments services apps intermediate ingress monitoring argocd status forward-grafana forward-argocd
 
 # Colors
 GREEN := \033[0;32m
@@ -33,6 +33,9 @@ check-context: ## Verify the isolated local context
 
 namespace: check-context ## Create the lab namespace
 	@kubectl apply -f 00-namespace.yaml
+
+shell: check-context ## Open an isolated shell with [homelab] prompt
+	@scripts/shell.sh
 
 check: check-context ## Check cluster status
 	@scripts/check-cluster.sh

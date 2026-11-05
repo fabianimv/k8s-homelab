@@ -13,12 +13,16 @@ El laboratorio no opera contra `~/.kube/config`. Todos los targets del Makefile 
 - Antes de ejecutar cualquier comando, los scripts verifican que el contexto sea `docker-desktop` y que el servidor sea local. Si detectan un contexto ajeno al laboratorio, abortan.
 - El namespace por defecto del contexto local es `homelab`. Los manifiestos sin `namespace` se despliegan ahí.
 - `./.kube/` y `./.helm/` están en `.gitignore`.
-- Para usar `kubectl` manualmente, carga el entorno primero: `source scripts/activate.sh`.
+- Para usar `kubectl` manualmente, abre una shell aislada con `make shell` o carga el entorno con `source scripts/activate.sh`.
 - `make reset` elimina el namespace `homelab` y los add-ons del lab (`monitoring`, `argocd`, `ingress-nginx`).
 
 Docker Desktop puede agregar o actualizar el contexto `docker-desktop` y cambiar el `current-context` global al iniciar. El laboratorio no usa ese archivo. Verifica tu contexto global con `kubectl config current-context` antes de trabajar con otros clusters.
 
 Si usas otro cluster local (por ejemplo kind o minikube), exporta su contexto antes de generar el kubeconfig: `export HOMELAB_CONTEXT=<nombre-del-contexto>`. El guard sigue exigiendo que el servidor sea local.
+
+## 🐚 Shell aislada
+
+`make shell` abre una shell con `KUBECONFIG=./.kube/config`, prompt `[homelab]` y wrappers de `kubectl`/`helm`. Los wrappers verifican que el kubeconfig local siga siendo el único contexto y que el contexto actual sea `docker-desktop`; si no, bloquean el comando. `deactivate_homelab` desactiva el modo. No es una sandbox de seguridad: `command kubectl` omite el wrapper a propósito.
 
 ## 📋 Prerequisitos
 
@@ -43,8 +47,8 @@ make check
 # 4. Desplegar el primer lab
 make pods
 
-# 5. Para usar kubectl manualmente en esta terminal
-source scripts/activate.sh
+# 5. Para usar kubectl manualmente, abre la shell aislada
+make shell
 kubectl get pods -n homelab
 ```
 
